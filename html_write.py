@@ -1,7 +1,7 @@
 #!/usr/bin/env python2
 
 class html_write():
-    
+
     HTML_4_01_STRICT = "HTML 4.01 Strict"
     HTML_5_0         = "HTML 5.0"
     XHTML_1_0_STRICT = "XHTML 1.0 Strict"
@@ -10,14 +10,20 @@ class html_write():
     #doctype = HTML_5_0
     #doctype = XHTML_1_0_STRICT
     #doctype = XHTML_1_1
-    
+
     tags_no_close = {
         HTML_4_01_STRICT: set(("meta",)),
         HTML_5_0        : set(("meta",)),
         XHTML_1_0_STRICT: set(),
         XHTML_1_1       : set(),
         }
-    tags_inline = set(("i", "b", "u", "em"))
+    tags_inline = set((
+        "b", "big", "i", "small", "tt",
+        "abbr", "acronym", "cite", "code", "dfn", "em", "kbd", "strong", "samp", "var",
+        "a", "bdo", "br", "img", "map", "object", "q", "script", "span", "sub", "sup",
+        "button", "input", "label", "select", "textarea",
+        ))
+
     self_close_ok = set((
         HTML_5_0        ,
         XHTML_1_0_STRICT,
@@ -47,11 +53,11 @@ class html_write():
         XHTML_1_0_STRICT: [("xmlns", "http://www.w3.org/1999/xhtml")],
         XHTML_1_1       : [("xmlns", "http://www.w3.org/1999/xhtml")],
         }
-    
+
     def __init__(self, doctype=XHTML_1_1, indent_size=4):
         self.doctype = doctype
         self.indent_size = indent_size
-        
+
     def make_html(self, page, indent=0):
         res = ""
         indstr = " "*indent
@@ -70,12 +76,13 @@ class html_write():
         elif type(page) is type([]):
             for c in page:
                 res += self.make_html(c, indent)
-        elif type(page) is type(""):
+        elif type(page) in (type(""), type(u"")):
             res += indstr+page+"\n"
         else:
-            error("unhandled type:", type(page))
+#            error("unhandled type:", type(page))
+            pass
         return res
-    
+
     @staticmethod
     def make_attr(l):
         res = ""
@@ -93,10 +100,10 @@ if __name__ == "__main__":
     body = ("body", [], [])
     page[1].append(head)
     page[1].append(body)
-    
+
     body[1].append(("h3", ["Hello,", ("i", "World!")]))
     body[1].append(("p", ["Embedded ", ("i", "Italics"), "Test"]))
-    
+
     table = ("table", [])
     tr = ("tr", [])
     tr[1].append(("td", "&nbsp;"))
@@ -113,9 +120,9 @@ if __name__ == "__main__":
     tr[1].append(("td", "value21"))
     tr[1].append(("td", "value22"))
     table[1].append(tr)
-    
+
     body[1].append(table)
-    
+
     #print(page)
     html = html_write.initial[hw.doctype] + hw.make_html(page)
     print(html)
