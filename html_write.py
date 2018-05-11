@@ -11,19 +11,21 @@ class html_write():
     #doctype = XHTML_1_0_STRICT
     #doctype = XHTML_1_1
 
+    # Some tags cannot be closed.
     tags_no_close = {
         HTML_4_01_STRICT: set(("meta",)),
         HTML_5_0        : set(("meta",)),
         XHTML_1_0_STRICT: set(),
         XHTML_1_1       : set(),
         }
+    # Inline elements should not have new line added before or after.
     tags_inline = set((
         "b", "big", "i", "small", "tt",
         "abbr", "acronym", "cite", "code", "dfn", "em", "kbd", "strong", "samp", "var",
         "a", "bdo", "br", "img", "map", "object", "q", "script", "span", "sub", "sup",
         "button", "input", "label", "select", "textarea",
         ))
-
+    # Things like <br /> are OK.
     self_close_ok = set((
         HTML_5_0        ,
         XHTML_1_0_STRICT,
@@ -57,34 +59,63 @@ class html_write():
     def __init__(self, doctype=XHTML_1_1, indent_size=4):
         self.doctype = doctype
         self.indent_size = indent_size
+        self.prev_nl = True
+
+    def _ensure_nl(self):
+        if not self.prev_nl:
+            self.prev_nl = True
+            return "\n"
+        else:
+            return ""
+
+    def _cond_nl(self, p):
+        if p in self.tags_inline:
+            return ""
+        else:
+            return self._ensure_nl()
+
+    def _cond_indent(self, indstr):
+        if self.prev_nl:
+            return indstr
+        else:
+            return ""
 
     def make_html(self, page, indent=0):
         res = ""
         indstr = " "*indent
         if type(page) is type(()):
             p = list(page); p.append([]); p.append([])  # Ensure at least 3 items.
-            attr = html_write.make_attr(p[2])
+            attr = html_write._make_attr(p[2])
             no_end = p[0] in html_write.tags_no_close[self.doctype]
             self_close = not p[1] and self.doctype in html_write.self_close_ok
+            res += self._cond_nl(p[0])
+            res += self._cond_indent(indstr)
+            res += "<"+p[0]+attr
             if self_close:
-                res += indstr+"<"+page[0]+attr+" />\n"
+                res += " />"; self.prev_nl = False
+                res += self._cond_nl(p[0])
             else:
-                res += indstr+"<"+p[0]+attr+">\n"
+                res += ">"; self.prev_nl = False
+                res += self._cond_nl(p[0])
                 res += self.make_html(p[1], indent+self.indent_size)
                 if not no_end:
-                    res += indstr+"</"+p[0]+">\n"
+                    res += self._cond_nl(p[0])
+                    res += self._cond_indent(indstr)
+                    res += "</"+p[0]+">"; self.prev_nl = False
+                    res += self._cond_nl(p[0])
         elif type(page) is type([]):
             for c in page:
                 res += self.make_html(c, indent)
         elif type(page) in (type(""), type(u"")):
-            res += indstr+page+"\n"
+            res += self._cond_indent(indstr)
+            res += page; self.prev_nl = False
         else:
 #            error("unhandled type:", type(page))
             pass
         return res
 
     @staticmethod
-    def make_attr(l):
+    def _make_attr(l):
         res = ""
         for a in l:
             res += ' '+a[0]+'="'+a[1]+'"'
