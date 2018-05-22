@@ -56,7 +56,7 @@ class html_write():
         XHTML_1_1       : [("xmlns", "http://www.w3.org/1999/xhtml")],
         }
 
-    def __init__(self, doctype=XHTML_1_1, indent_size=4):
+    def __init__(self, doctype=HTML_5_0, indent_size=4):
         self.doctype = doctype
         self.indent_size = indent_size
         self.prev_nl = True
