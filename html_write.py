@@ -1,5 +1,6 @@
 #!/usr/bin/env python2
 
+
 class html_write():
 
     HTML_4_01_STRICT = "HTML 4.01 Strict"
