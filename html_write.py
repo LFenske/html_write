@@ -7,6 +7,8 @@ class html_write():
     HTML_5_0         = "HTML 5.0"
     XHTML_1_0_STRICT = "XHTML 1.0 Strict"
     XHTML_1_1        = "XHTML 1.1"
+    XML              = "XML"
+    NCX              = "NCX"
     #doctype = HTML_4_01_STRICT
     #doctype = HTML_5_0
     #doctype = XHTML_1_0_STRICT
@@ -18,6 +20,8 @@ class html_write():
         HTML_5_0        : set(("meta",)),
         XHTML_1_0_STRICT: set(),
         XHTML_1_1       : set(),
+        XML             : set(),
+        NCX             : set(),
         }
     # Inline elements should not have new line added before or after.
     tags_inline = set((
@@ -25,12 +29,15 @@ class html_write():
         "abbr", "acronym", "cite", "code", "dfn", "em", "kbd", "strong", "samp", "var",
         "a", "bdo", "br", "img", "map", "object", "q", "script", "span", "sub", "sup",
         "button", "input", "label", "select", "textarea",
+        "dc:title", "dc:creator", "dc:source", "dc:language",
         ))
     # Things like <br /> are OK.
     self_close_ok = set((
         HTML_5_0        ,
         XHTML_1_0_STRICT,
         XHTML_1_1       ,
+        XML             ,
+        NCX             ,
         ))
     initial = {
         HTML_4_01_STRICT:
@@ -49,12 +56,22 @@ class html_write():
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
 "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 """,
-        }
+        XML:
+            """<?xml version="1.0" encoding="utf-8" ?>
+""",
+        NCX:
+            """<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE ncx PUBLIC "-//NISO//DTD ncx 2005-1//EN"
+"http://www.daisy.org/z3986/2005/ncx-2005-1.dtd">
+ """,
+    }
     attrs_html = {
         HTML_4_01_STRICT: [],
         HTML_5_0        : [("lang", "EN")],
         XHTML_1_0_STRICT: [("xmlns", "http://www.w3.org/1999/xhtml")],
         XHTML_1_1       : [("xmlns", "http://www.w3.org/1999/xhtml")],
+        XML             : [],
+        NCX             : [],
         }
 
     def __init__(self, doctype=HTML_5_0, indent_size=4):
