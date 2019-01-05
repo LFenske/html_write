@@ -60,10 +60,11 @@ class html_write():
             """<?xml version="1.0" encoding="utf-8" ?>
 """,
         NCX:
-            """<?xml version="1.0" encoding="utf-8" ?>
-<!DOCTYPE ncx PUBLIC "-//NISO//DTD ncx 2005-1//EN"
-"http://www.daisy.org/z3986/2005/ncx-2005-1.dtd">
- """,
+#             """<?xml version="1.0" encoding="utf-8" ?>
+# <!DOCTYPE ncx PUBLIC "-//NISO//DTD ncx 2005-1//EN"
+# "http://www.daisy.org/z3986/2005/ncx-2005-1.dtd">
+#  """,
+            """<?xml version="1.0" encoding="utf-8" ?>""",
     }
     attrs_html = {
         HTML_4_01_STRICT: [],
