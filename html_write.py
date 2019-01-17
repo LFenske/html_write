@@ -1,4 +1,6 @@
 #!/usr/bin/env python2
+# -*- coding: UTF-8 -*-
+# © Copyright 2015-2019 Larry Fenske
 
 
 class html_write():
